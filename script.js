@@ -404,6 +404,8 @@ const video = document.getElementById("birthdayVideo");
 const startSceneButton = document.getElementById("startSceneButton");
 const videoOverlay = document.getElementById("videoOverlay");
 const revealSideVideo = document.getElementById("revealSideVideo");
+const revealVideoOverlay = document.getElementById("revealVideoOverlay");
+const startRevealVideoButton = document.getElementById("startRevealVideoButton");
 const surpriseAudio = document.getElementById("surpriseAudio");
 const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") ||
   (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform || ""));
@@ -486,21 +488,57 @@ if (video) {
 if (revealSideVideo) {
   revealSideVideo.loop = true;
   revealSideVideo.volume = 1;
-  revealSideVideo.muted = false;
+  revealSideVideo.playsInline = true;
+  revealSideVideo.defaultMuted = isMobileDevice;
+  revealSideVideo.muted = isMobileDevice;
 
   const startRevealVideo = async () => {
+    if (backgroundMusic) {
+      backgroundMusic.pause();
+      saveBackgroundMusicTime();
+    }
+
+    revealSideVideo.defaultMuted = false;
     revealSideVideo.muted = false;
+    revealSideVideo.removeAttribute("muted");
 
     try {
       await revealSideVideo.play();
+      if (revealVideoOverlay) {
+        revealVideoOverlay.classList.add("is-hidden");
+      }
     } catch (error) {
       revealSideVideo.controls = true;
+      if (revealVideoOverlay) {
+        revealVideoOverlay.classList.remove("is-hidden");
+      }
     }
   };
 
+  const autoplayRevealVideo = async () => {
+    try {
+      await revealSideVideo.play();
+      if (revealVideoOverlay) {
+        revealVideoOverlay.classList.toggle("is-hidden", !isMobileDevice);
+      }
+    } catch (error) {
+      if (revealVideoOverlay) {
+        revealVideoOverlay.classList.remove("is-hidden");
+      }
+    }
+  };
+
+  if (isMobileDevice && revealVideoOverlay) {
+    revealVideoOverlay.classList.remove("is-hidden");
+  }
+
   if (revealSideVideo.readyState >= 2) {
-    startRevealVideo();
+    autoplayRevealVideo();
   } else {
-    revealSideVideo.addEventListener("loadeddata", startRevealVideo, { once: true });
+    revealSideVideo.addEventListener("loadeddata", autoplayRevealVideo, { once: true });
+  }
+
+  if (startRevealVideoButton) {
+    startRevealVideoButton.addEventListener("click", startRevealVideo);
   }
 }

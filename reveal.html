@@ -57,10 +57,14 @@
 
       <div class="hero-visual">
         <div class="reveal-video-card">
-          <video id="revealSideVideo" class="reveal-side-video" autoplay loop playsinline preload="auto">
+          <video id="revealSideVideo" class="reveal-side-video" autoplay loop playsinline webkit-playsinline preload="auto" muted>
             <source src="J_D_WKKH_FSRN_Y_CPZ_B_J_mp_.mp4" type="video/mp4">
             Your browser does not support the reveal video.
           </video>
+          <div id="revealVideoOverlay" class="video-overlay">
+            <p>Tap to hear the reveal.</p>
+            <button id="startRevealVideoButton" class="button primary" type="button">Play Reveal</button>
+          </div>
         </div>
       </div>
     </section>

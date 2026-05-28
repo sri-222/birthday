@@ -381,7 +381,9 @@ a {
 }
 
 .lock-hitbox {
-  display: block;
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
   width: min(24rem, 76vw);
   margin: 1.6rem auto 0;
   padding: 0;
@@ -390,6 +392,30 @@ a {
   cursor: pointer;
   position: relative;
   z-index: 2;
+}
+
+.lock-hitbox-label {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 14rem;
+  min-height: 3.3rem;
+  padding: 0.8rem 1.2rem;
+  border-radius: 999px;
+  background: linear-gradient(135deg, rgba(255, 111, 159, 0.92), rgba(234, 77, 133, 0.92));
+  color: #fff8fb;
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  box-shadow: 0 16px 30px rgba(184, 76, 119, 0.24);
+}
+
+.lock-help-text {
+  margin: 0.9rem auto 0;
+  max-width: 22rem;
+  color: var(--text-soft);
+  font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .lock-hitbox:focus-visible {
@@ -1301,6 +1327,12 @@ button:disabled,
 
   .lock-hitbox {
     margin: 1.2rem auto 0;
+    width: min(100%, 22rem);
+  }
+
+  .lock-hitbox-label {
+    width: 100%;
+    min-width: 0;
   }
 
   .balloon {
