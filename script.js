@@ -387,6 +387,7 @@ const revealSideVideo = document.getElementById("revealSideVideo");
 if (video) {
   video.controls = false;
   video.pause();
+  video.playsInline = true;
 }
 
 if (startSceneButton && video) {
@@ -397,14 +398,27 @@ if (startSceneButton && video) {
 
     video.classList.add("is-active");
 
+    backgroundMusic.pause();
+    saveBackgroundMusicTime();
     video.currentTime = 0;
+    video.volume = 1;
+    video.defaultMuted = false;
     video.muted = false;
+    video.removeAttribute("muted");
 
     try {
       await video.play();
     } catch (error) {
       video.muted = true;
-      await video.play();
+
+      try {
+        await video.play();
+      } catch (fallbackError) {
+        video.controls = true;
+        if (videoOverlay) {
+          videoOverlay.classList.remove("is-hidden");
+        }
+      }
     }
   });
 }
