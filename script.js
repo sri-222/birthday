@@ -3,6 +3,7 @@ const releaseDate = new Date(2026, 5, 2, 0, 0, 0, 0);
 const releasePage = "index.html";
 const currentPath = window.location.pathname.split("/").pop() || releasePage;
 const isReleaseLocked = false;
+const allowBackgroundMusicOnCurrentPage = !["surprise.html", "reveal.html"].includes(currentPath);
 let audioContext;
 const backgroundMusic = new Audio("the_mountain-birthday-490600.mp3");
 const backgroundMusicTimeKey = "birthdayBackgroundMusicTime";
@@ -148,6 +149,10 @@ const clearBackgroundMusicUnlockListeners = () => {
 };
 
 async function startBackgroundMusic() {
+  if (!allowBackgroundMusicOnCurrentPage) {
+    return false;
+  }
+
   try {
     await backgroundMusic.play();
   } catch (error) {
@@ -160,13 +165,17 @@ async function startBackgroundMusic() {
 }
 
 restoreBackgroundMusicTime();
-if (window.sessionStorage.getItem(backgroundMusicUnlockedKey) === "true") {
+if (allowBackgroundMusicOnCurrentPage && window.sessionStorage.getItem(backgroundMusicUnlockedKey) === "true") {
   startBackgroundMusic();
 }
-document.addEventListener("pointerdown", startBackgroundMusic);
-document.addEventListener("touchend", startBackgroundMusic);
-document.addEventListener("click", startBackgroundMusic);
-document.addEventListener("keydown", startBackgroundMusic);
+if (allowBackgroundMusicOnCurrentPage) {
+  document.addEventListener("pointerdown", startBackgroundMusic);
+  document.addEventListener("touchend", startBackgroundMusic);
+  document.addEventListener("click", startBackgroundMusic);
+  document.addEventListener("keydown", startBackgroundMusic);
+} else {
+  backgroundMusic.pause();
+}
 window.addEventListener("beforeunload", saveBackgroundMusicTime);
 window.setInterval(saveBackgroundMusicTime, 1200);
 
@@ -443,6 +452,7 @@ const video = document.getElementById("birthdayVideo");
 const startSceneButton = document.getElementById("startSceneButton");
 const videoOverlay = document.getElementById("videoOverlay");
 const revealSideVideo = document.getElementById("revealSideVideo");
+const revealSoundHint = document.getElementById("revealSoundHint");
 const surpriseAudio = document.getElementById("surpriseAudio");
 const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") ||
   (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform || ""));
@@ -451,6 +461,7 @@ if (video) {
   video.controls = false;
   video.pause();
   video.playsInline = true;
+  video.preload = "auto";
 }
 
 if (startSceneButton && video) {
@@ -469,32 +480,27 @@ if (startSceneButton && video) {
     saveBackgroundMusicTime();
     video.currentTime = 0;
     video.volume = 1;
-    video.defaultMuted = isMobileDevice;
-    video.muted = isMobileDevice;
-
-    if (isMobileDevice) {
-      video.setAttribute("muted", "");
-    } else {
-      video.removeAttribute("muted");
-    }
+    video.defaultMuted = false;
+    video.muted = false;
+    video.removeAttribute("muted");
 
     if (surpriseAudio) {
       surpriseAudio.pause();
       surpriseAudio.currentTime = 0;
-      surpriseAudio.volume = 1;
-      surpriseAudio.load();
+      surpriseAudio.volume = 0.9;
     }
 
     try {
-      if (isMobileDevice && surpriseAudio) {
-        await surpriseAudio.play();
-      }
-
       await video.play();
     } catch (error) {
       video.muted = true;
+      video.setAttribute("muted", "");
 
       try {
+        if (surpriseAudio) {
+          await surpriseAudio.play();
+        }
+
         await video.play();
       } catch (fallbackError) {
         if (surpriseAudio) {
@@ -532,8 +538,8 @@ if (revealSideVideo) {
   revealSideVideo.loop = true;
   revealSideVideo.volume = 1;
   revealSideVideo.playsInline = true;
-  revealSideVideo.defaultMuted = isMobileDevice;
-  revealSideVideo.muted = isMobileDevice;
+  revealSideVideo.defaultMuted = false;
+  revealSideVideo.muted = false;
 
   const unmuteRevealVideo = async () => {
     if (backgroundMusic) {
@@ -547,6 +553,9 @@ if (revealSideVideo) {
 
     try {
       await revealSideVideo.play();
+      if (revealSoundHint) {
+        revealSoundHint.classList.add("is-hidden");
+      }
     } catch (error) {
       revealSideVideo.controls = true;
     }
@@ -554,9 +563,26 @@ if (revealSideVideo) {
 
   const autoplayRevealVideo = async () => {
     try {
+      revealSideVideo.defaultMuted = false;
+      revealSideVideo.muted = false;
+      revealSideVideo.removeAttribute("muted");
       await revealSideVideo.play();
+      if (revealSoundHint) {
+        revealSoundHint.classList.add("is-hidden");
+      }
     } catch (error) {
-      revealSideVideo.controls = true;
+      revealSideVideo.defaultMuted = true;
+      revealSideVideo.muted = true;
+      revealSideVideo.setAttribute("muted", "");
+
+      try {
+        await revealSideVideo.play();
+        if (revealSoundHint) {
+          revealSoundHint.classList.toggle("is-hidden", !isMobileDevice);
+        }
+      } catch (mutedError) {
+        revealSideVideo.controls = true;
+      }
     }
   };
 

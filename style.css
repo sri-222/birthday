@@ -1032,6 +1032,46 @@ button:disabled,
   transition: opacity 0.4s ease, visibility 0.4s ease;
 }
 
+.video-overlay-card {
+  display: grid;
+  justify-items: center;
+  gap: 0.9rem;
+  max-width: 16rem;
+}
+
+.sound-bubble,
+.sound-hint-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.55rem 0.95rem;
+  border-radius: 999px;
+  background: rgba(255, 247, 251, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: var(--accent-deep);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  box-shadow: 0 14px 28px rgba(31, 12, 21, 0.22);
+}
+
+.sound-hint-pill {
+  position: absolute;
+  left: 50%;
+  bottom: 1rem;
+  transform: translateX(-50%);
+  z-index: 2;
+  backdrop-filter: blur(10px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+}
+
+.sound-hint-pill.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(0.5rem);
+}
+
 .video-overlay.is-hidden {
   opacity: 0;
   visibility: hidden;
