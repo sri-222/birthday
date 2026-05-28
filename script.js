@@ -404,8 +404,6 @@ const video = document.getElementById("birthdayVideo");
 const startSceneButton = document.getElementById("startSceneButton");
 const videoOverlay = document.getElementById("videoOverlay");
 const revealSideVideo = document.getElementById("revealSideVideo");
-const revealVideoOverlay = document.getElementById("revealVideoOverlay");
-const startRevealVideoButton = document.getElementById("startRevealVideoButton");
 const surpriseAudio = document.getElementById("surpriseAudio");
 const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") ||
   (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform || ""));
@@ -417,13 +415,17 @@ if (video) {
 }
 
 if (startSceneButton && video) {
-  startSceneButton.addEventListener("click", async () => {
+  startSceneButton.addEventListener("click", async (event) => {
+    event.stopPropagation();
+
     if (videoOverlay) {
       videoOverlay.classList.add("is-hidden");
     }
 
     video.classList.add("is-active");
 
+    clearBackgroundMusicUnlockListeners();
+    markBackgroundMusicUnlocked();
     backgroundMusic.pause();
     saveBackgroundMusicTime();
     video.currentTime = 0;
@@ -441,6 +443,7 @@ if (startSceneButton && video) {
       surpriseAudio.pause();
       surpriseAudio.currentTime = 0;
       surpriseAudio.volume = 1;
+      surpriseAudio.load();
     }
 
     try {
@@ -492,7 +495,7 @@ if (revealSideVideo) {
   revealSideVideo.defaultMuted = isMobileDevice;
   revealSideVideo.muted = isMobileDevice;
 
-  const startRevealVideo = async () => {
+  const unmuteRevealVideo = async () => {
     if (backgroundMusic) {
       backgroundMusic.pause();
       saveBackgroundMusicTime();
@@ -504,33 +507,18 @@ if (revealSideVideo) {
 
     try {
       await revealSideVideo.play();
-      if (revealVideoOverlay) {
-        revealVideoOverlay.classList.add("is-hidden");
-      }
     } catch (error) {
       revealSideVideo.controls = true;
-      if (revealVideoOverlay) {
-        revealVideoOverlay.classList.remove("is-hidden");
-      }
     }
   };
 
   const autoplayRevealVideo = async () => {
     try {
       await revealSideVideo.play();
-      if (revealVideoOverlay) {
-        revealVideoOverlay.classList.toggle("is-hidden", !isMobileDevice);
-      }
     } catch (error) {
-      if (revealVideoOverlay) {
-        revealVideoOverlay.classList.remove("is-hidden");
-      }
+      revealSideVideo.controls = true;
     }
   };
-
-  if (isMobileDevice && revealVideoOverlay) {
-    revealVideoOverlay.classList.remove("is-hidden");
-  }
 
   if (revealSideVideo.readyState >= 2) {
     autoplayRevealVideo();
@@ -538,7 +526,7 @@ if (revealSideVideo) {
     revealSideVideo.addEventListener("loadeddata", autoplayRevealVideo, { once: true });
   }
 
-  if (startRevealVideoButton) {
-    startRevealVideoButton.addEventListener("click", startRevealVideo);
-  }
+  document.addEventListener("pointerdown", unmuteRevealVideo, { once: true });
+  document.addEventListener("touchend", unmuteRevealVideo, { once: true });
+  document.addEventListener("click", unmuteRevealVideo, { once: true });
 }
