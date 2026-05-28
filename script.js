@@ -1,8 +1,90 @@
 const speechBox = document.getElementById("typewriter");
+const releaseDate = new Date(2026, 5, 2, 0, 0, 0, 0);
+const releasePage = "index.html";
+const currentPath = window.location.pathname.split("/").pop() || releasePage;
+const isReleaseLocked = new Date() < releaseDate;
 let audioContext;
 const backgroundMusic = new Audio("the_mountain-birthday-490600.mp3");
 const backgroundMusicTimeKey = "birthdayBackgroundMusicTime";
 const backgroundMusicVolume = 0.16;
+
+const formatCountdown = (distance) => {
+  const totalSeconds = Math.max(0, Math.floor(distance / 1000));
+  const days = Math.floor(totalSeconds / 86400);
+  const hours = Math.floor((totalSeconds % 86400) / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+
+  if (days > 0) {
+    return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+  }
+
+  return `${hours}h ${minutes}m ${seconds}s`;
+};
+
+const activateReleaseCountdown = () => {
+  const lockIntro = document.getElementById("lockIntro");
+  const openCodeButton = document.getElementById("openCodeButton");
+
+  if (!lockIntro) {
+    return;
+  }
+
+  const microCopy = lockIntro.querySelector(".micro-copy");
+  const title = lockIntro.querySelector("h1");
+  const lead = lockIntro.querySelector(".lead");
+  let countdownMessage = lockIntro.querySelector("#countdownMessage");
+
+  if (microCopy) {
+    microCopy.textContent = "A little wish is resting";
+  }
+
+  if (title) {
+    title.textContent = "Your birthday surprise is sleeping for a little while longer.";
+  }
+
+  if (lead) {
+    lead.textContent = "When the clock softly turns to 12:00 AM, your birthday surprise will opens.";
+  }
+
+  if (openCodeButton) {
+    openCodeButton.disabled = true;
+    openCodeButton.setAttribute("aria-disabled", "true");
+    openCodeButton.title = "Available at midnight between June 1 and June 2";
+  }
+
+  if (!countdownMessage) {
+    countdownMessage = document.createElement("p");
+    countdownMessage.id = "countdownMessage";
+    countdownMessage.className = "countdown-message";
+    lockIntro.appendChild(countdownMessage);
+  }
+
+  const updateCountdown = () => {
+    const distance = releaseDate.getTime() - Date.now();
+
+    if (distance <= 0) {
+      countdownMessage.textContent = "The birthday surprise is awake now... opening in a moment.";
+      window.setTimeout(() => {
+        window.location.reload();
+      }, 900);
+      return;
+    }
+
+    countdownMessage.textContent = `It will wake up in ${formatCountdown(distance)}.`;
+  };
+
+  updateCountdown();
+  window.setInterval(updateCountdown, 1000);
+};
+
+if (isReleaseLocked) {
+  if (currentPath !== "" && currentPath !== releasePage) {
+    window.location.replace(releasePage);
+  } else {
+    activateReleaseCountdown();
+  }
+}
 
 backgroundMusic.loop = true;
 backgroundMusic.preload = "auto";
@@ -237,6 +319,10 @@ let isOpening = false;
 
 if (openCodeButton) {
   openCodeButton.addEventListener("click", () => {
+    if (isReleaseLocked) {
+      return;
+    }
+
     if (isOpening) {
       return;
     }
@@ -262,6 +348,11 @@ if (cuteLock) {
 if (passwordForm && passwordInput && passwordMessage) {
   passwordForm.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    if (isReleaseLocked) {
+      passwordMessage.textContent = "The wish is still dreaming a little longer. It will open at midnight between June 1 and June 2.";
+      return;
+    }
 
     if (passwordInput.value.trim().toLowerCase() === "jisi") {
       if (lockCard) {
