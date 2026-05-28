@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Code</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page page-entry">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="sparkles" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <main class="shell">
+    <section id="lockCard" class="lock-card auth-card">
+      <div class="code-entry-wrap">
+        <div class="lock-copy code-panel-page code-panel-cute">
+          <div class="code-stamp-row">
+            <p class="micro-copy">Wish key</p>
+            <span class="code-stamp">For your smile</span>
+          </div>
+          <h1>Whisper the word that unlocks your wish.</h1>
+          <p class="lead">One sweet word, then the birthday magic opens softly for you.</p>
+
+          <div class="code-note-card" aria-hidden="true">
+            <p class="code-note-title">A tiny clue</p>
+            <p class="code-note-text">The right word belongs to your heart, your smile, and this birthday surprise.</p>
+          </div>
+
+          <form id="passwordForm" class="password-form">
+            <label class="password-label" for="passwordInput">Wish word</label>
+            <div class="password-shell">
+              <div class="password-row">
+                <input id="passwordInput" name="password" type="password" autocomplete="off" placeholder="Type the wish word" required>
+                <button class="button primary button-submit" type="submit">Open Wish</button>
+              </div>
+              <p class="password-hint">Tiny hint: the answer is already part of your gift.</p>
+            </div>
+            <p id="passwordMessage" class="password-message" aria-live="polite"></p>
+          </form>
+        </div>
+
+        <div class="code-entry-visual" aria-hidden="true">
+          <div class="cute-auth-visual code-auth-visual">
+            <div class="cute-orb orb-one"></div>
+            <div class="cute-orb orb-two"></div>
+            <div class="cute-lock simple-lock code-lock-display">
+              <div class="cute-lock-top"></div>
+              <div class="cute-lock-body"></div>
+            </div>
+            <div class="mini-star star-one"></div>
+            <div class="mini-star star-two"></div>
+            <div class="mini-star star-three"></div>
+          </div>
+          <div class="code-badge">Wish keeper mode</div>
+          <div class="code-side-note">
+            <span></span>
+            <p>Only the right birthday word opens this little pocket of joy.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

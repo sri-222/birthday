@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reveal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page page-reveal">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="sparkles" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+  <div class="balloons" aria-hidden="true">
+    <span class="balloon balloon-pink"></span>
+    <span class="balloon balloon-cream"></span>
+    <span class="balloon balloon-rose"></span>
+  </div>
+
+  <main class="shell">
+    <section class="hero-card reveal-card">
+      <div class="hero-copy">
+        <p class="micro-copy">Wish revealed</p>
+        <h1 id="typewriter" class="reveal-title" data-lines='["Your wish is glowing...","May today hold soft joy.","One final smile is waiting."]'></h1>
+        <p class="lead">A little trail of wishes, music, and color is leading you to the sweetest part.</p>
+
+        <div class="speech-card">
+          <span class="speech-label">Wish note</span>
+          <p class="speech-text">May your heart feel light, your smile stay bright, and your day be full of gentle happiness.</p>
+        </div>
+
+        <div class="actions">
+          <a class="button primary" href="final.html">Open Birthday Wish</a>
+          <a class="button secondary" href="surprise.html">Replay Wish</a>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="reveal-video-card">
+          <video id="revealSideVideo" class="reveal-side-video" autoplay loop playsinline preload="auto">
+            <source src="J_D_WKKH_FSRN_Y_CPZ_B_J_mp_.mp4" type="video/mp4">
+            Your browser does not support the reveal video.
+          </video>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

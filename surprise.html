@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Surprise</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page page-video">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="sparkles" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <main class="shell">
+    <section class="surprise-stage">
+      <div class="surprise-copy">
+        <p class="micro-copy">Wish in motion</p>
+        <h1>A birthday smile is ready to play.</h1>
+        <p class="lead">Here is a soft little moment filled with color, music, and a wish made to brighten your day.</p>
+        <div class="actions">
+          <button id="startSceneButton" class="button primary button-submit" type="button">Play Wish</button>
+          <a class="button secondary" href="code.html">Wish Key</a>
+        </div>
+      </div>
+
+      <div class="video-shell">
+        <div class="video-frame">
+          <video id="birthdayVideo" class="scene-video framed-video" playsinline preload="metadata" muted disablepictureinpicture controlslist="nodownload noplaybackrate nofullscreen">
+            <source src="birthday1.mp4" type="video/mp4">
+            Your browser does not support the birthday video.
+          </video>
+          <div id="videoOverlay" class="video-overlay">
+            <p>Tap play and let the birthday wish bloom.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

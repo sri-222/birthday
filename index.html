@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Birthday Lock</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="page page-entry">
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="sparkles" aria-hidden="true">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <main class="shell">
+    <section id="lockCard" class="lock-card auth-card">
+      <div id="lockIntro" class="lock-intro">
+        <p class="micro-copy">A wish is waiting</p>
+        <h1>Tap the lock to begin your birthday wish.</h1>
+        <p class="lead">A warm little doorway into smiles, memories, and a surprise made only for you.</p>
+        <button id="openCodeButton" class="lock-hitbox" type="button" aria-label="Open birthday wish">
+          <div class="cute-auth-visual" aria-hidden="true">
+            <div class="cute-orb orb-one"></div>
+            <div class="cute-orb orb-two"></div>
+            <div id="cuteLock" class="cute-lock simple-lock">
+              <div class="cute-lock-top"></div>
+              <div class="cute-lock-body"></div>
+            </div>
+            <div class="mini-star star-one"></div>
+            <div class="mini-star star-two"></div>
+            <div class="mini-star star-three"></div>
+          </div>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
