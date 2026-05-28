@@ -55,8 +55,8 @@ const activateReleaseCountdown = () => {
   }
 
   if (openCodeButton) {
-    openCodeButton.disabled = true;
     openCodeButton.setAttribute("aria-disabled", "true");
+    openCodeButton.setAttribute("data-locked", "true");
     openCodeButton.title = "Available at midnight between June 1 and June 2";
   }
 
@@ -87,8 +87,8 @@ const activateReleaseCountdown = () => {
     }
 
     if (openCodeButton) {
-      openCodeButton.disabled = false;
       openCodeButton.removeAttribute("aria-disabled");
+      openCodeButton.removeAttribute("data-locked");
       openCodeButton.removeAttribute("title");
     }
 
@@ -415,6 +415,7 @@ finalPageLinks.forEach((link) => {
 if (openCodeButton) {
   openCodeButton.addEventListener("click", async () => {
     if (isReleaseLocked()) {
+      await startBackgroundMusic();
       return;
     }
 

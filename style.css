@@ -577,6 +577,14 @@ button:disabled,
   cursor: not-allowed;
 }
 
+.lock-hitbox[aria-disabled="true"] {
+  opacity: 0.82;
+}
+
+.lock-hitbox[aria-disabled="true"] .lock-hitbox-label {
+  background: linear-gradient(135deg, rgba(255, 180, 202, 0.95), rgba(233, 129, 166, 0.9));
+}
+
 .password-hint {
   margin: 0.8rem 0 0;
   color: var(--text-soft);
