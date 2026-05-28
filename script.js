@@ -2,7 +2,6 @@ const speechBox = document.getElementById("typewriter");
 const releaseDate = new Date(2026, 5, 2, 0, 0, 0, 0);
 const releasePage = "index.html";
 const currentPath = window.location.pathname.split("/").pop() || releasePage;
-const isReleaseLocked = false;
 const allowBackgroundMusicOnCurrentPage = !["surprise.html", "reveal.html"].includes(currentPath);
 let audioContext;
 const backgroundMusic = new Audio("the_mountain-birthday-490600.mp3");
@@ -25,6 +24,8 @@ const formatCountdown = (distance) => {
   return `${hours}h ${minutes}m ${seconds}s`;
 };
 
+const isReleaseLocked = () => new Date() < releaseDate;
+
 const activateReleaseCountdown = () => {
   const lockIntro = document.getElementById("lockIntro");
   const openCodeButton = document.getElementById("openCodeButton");
@@ -37,6 +38,9 @@ const activateReleaseCountdown = () => {
   const title = lockIntro.querySelector("h1");
   const lead = lockIntro.querySelector(".lead");
   let countdownMessage = lockIntro.querySelector("#countdownMessage");
+  const originalMicroCopy = microCopy ? microCopy.textContent : "";
+  const originalTitle = title ? title.textContent : "";
+  const originalLead = lead ? lead.textContent : "";
 
   if (microCopy) {
     microCopy.textContent = "A little wish is resting";
@@ -63,14 +67,41 @@ const activateReleaseCountdown = () => {
     lockIntro.appendChild(countdownMessage);
   }
 
+  let countdownTimer;
+
+  const restoreUnlockedEntry = () => {
+    if (countdownTimer) {
+      window.clearInterval(countdownTimer);
+    }
+
+    if (microCopy) {
+      microCopy.textContent = originalMicroCopy;
+    }
+
+    if (title) {
+      title.textContent = originalTitle;
+    }
+
+    if (lead) {
+      lead.textContent = originalLead;
+    }
+
+    if (openCodeButton) {
+      openCodeButton.disabled = false;
+      openCodeButton.removeAttribute("aria-disabled");
+      openCodeButton.removeAttribute("title");
+    }
+
+    if (countdownMessage) {
+      countdownMessage.remove();
+    }
+  };
+
   const updateCountdown = () => {
     const distance = releaseDate.getTime() - Date.now();
 
     if (distance <= 0) {
-      countdownMessage.textContent = "The birthday surprise is awake now... opening in a moment.";
-      window.setTimeout(() => {
-        window.location.reload();
-      }, 900);
+      restoreUnlockedEntry();
       return;
     }
 
@@ -78,10 +109,10 @@ const activateReleaseCountdown = () => {
   };
 
   updateCountdown();
-  window.setInterval(updateCountdown, 1000);
+  countdownTimer = window.setInterval(updateCountdown, 1000);
 };
 
-if (isReleaseLocked) {
+if (isReleaseLocked()) {
   if (currentPath !== "" && currentPath !== releasePage) {
     window.location.replace(releasePage);
   } else {
@@ -383,7 +414,7 @@ finalPageLinks.forEach((link) => {
 
 if (openCodeButton) {
   openCodeButton.addEventListener("click", async () => {
-    if (isReleaseLocked) {
+    if (isReleaseLocked()) {
       return;
     }
 
@@ -415,7 +446,7 @@ if (passwordForm && passwordInput && passwordMessage) {
   passwordForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    if (isReleaseLocked) {
+    if (isReleaseLocked()) {
       passwordMessage.textContent = "The wish is still dreaming a little longer. It will open at midnight between June 1 and June 2.";
       return;
     }
