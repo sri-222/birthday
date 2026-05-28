@@ -7,6 +7,7 @@ let audioContext;
 const backgroundMusic = new Audio("the_mountain-birthday-490600.mp3");
 const backgroundMusicTimeKey = "birthdayBackgroundMusicTime";
 const backgroundMusicVolume = 0.16;
+const backgroundMusicUnlockedKey = "birthdayBackgroundMusicUnlocked";
 
 const formatCountdown = (distance) => {
   const totalSeconds = Math.max(0, Math.floor(distance / 1000));
@@ -89,6 +90,7 @@ if (isReleaseLocked) {
 backgroundMusic.loop = true;
 backgroundMusic.preload = "auto";
 backgroundMusic.volume = backgroundMusicVolume;
+backgroundMusic.playsInline = true;
 
 const restoreBackgroundMusicTime = () => {
   const savedTime = Number(window.localStorage.getItem(backgroundMusicTimeKey));
@@ -104,21 +106,37 @@ const saveBackgroundMusicTime = () => {
   }
 };
 
-const startBackgroundMusic = async () => {
-  try {
-    await backgroundMusic.play();
-  } catch (error) {
-    return;
-  }
+const markBackgroundMusicUnlocked = () => {
+  window.sessionStorage.setItem(backgroundMusicUnlockedKey, "true");
+};
 
+const clearBackgroundMusicUnlockListeners = () => {
   document.removeEventListener("pointerdown", startBackgroundMusic);
+  document.removeEventListener("touchend", startBackgroundMusic);
+  document.removeEventListener("click", startBackgroundMusic);
   document.removeEventListener("keydown", startBackgroundMusic);
 };
 
+async function startBackgroundMusic() {
+  try {
+    await backgroundMusic.play();
+  } catch (error) {
+    return false;
+  }
+
+  markBackgroundMusicUnlocked();
+  clearBackgroundMusicUnlockListeners();
+  return true;
+}
+
 restoreBackgroundMusicTime();
-startBackgroundMusic();
-document.addEventListener("pointerdown", startBackgroundMusic, { once: true });
-document.addEventListener("keydown", startBackgroundMusic, { once: true });
+if (window.sessionStorage.getItem(backgroundMusicUnlockedKey) === "true") {
+  startBackgroundMusic();
+}
+document.addEventListener("pointerdown", startBackgroundMusic);
+document.addEventListener("touchend", startBackgroundMusic);
+document.addEventListener("click", startBackgroundMusic);
+document.addEventListener("keydown", startBackgroundMusic);
 window.addEventListener("beforeunload", saveBackgroundMusicTime);
 window.setInterval(saveBackgroundMusicTime, 1200);
 
@@ -318,7 +336,7 @@ const cuteLock = document.getElementById("cuteLock");
 let isOpening = false;
 
 if (openCodeButton) {
-  openCodeButton.addEventListener("click", () => {
+  openCodeButton.addEventListener("click", async () => {
     if (isReleaseLocked) {
       return;
     }
@@ -327,6 +345,7 @@ if (openCodeButton) {
       return;
     }
 
+    await startBackgroundMusic();
     isOpening = true;
     if (lockCard) {
       lockCard.classList.add("is-opening");
@@ -346,7 +365,7 @@ if (cuteLock) {
 }
 
 if (passwordForm && passwordInput && passwordMessage) {
-  passwordForm.addEventListener("submit", (event) => {
+  passwordForm.addEventListener("submit", async (event) => {
     event.preventDefault();
 
     if (isReleaseLocked) {
@@ -355,6 +374,8 @@ if (passwordForm && passwordInput && passwordMessage) {
     }
 
     if (passwordInput.value.trim().toLowerCase() === "jisi") {
+      await startBackgroundMusic();
+
       if (lockCard) {
         lockCard.classList.add("is-verified");
       }
@@ -383,6 +404,9 @@ const video = document.getElementById("birthdayVideo");
 const startSceneButton = document.getElementById("startSceneButton");
 const videoOverlay = document.getElementById("videoOverlay");
 const revealSideVideo = document.getElementById("revealSideVideo");
+const surpriseAudio = document.getElementById("surpriseAudio");
+const isMobileDevice = /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || "") ||
+  (navigator.maxTouchPoints > 1 && /Mac/i.test(navigator.platform || ""));
 
 if (video) {
   video.controls = false;
@@ -402,11 +426,26 @@ if (startSceneButton && video) {
     saveBackgroundMusicTime();
     video.currentTime = 0;
     video.volume = 1;
-    video.defaultMuted = false;
-    video.muted = false;
-    video.removeAttribute("muted");
+    video.defaultMuted = isMobileDevice;
+    video.muted = isMobileDevice;
+
+    if (isMobileDevice) {
+      video.setAttribute("muted", "");
+    } else {
+      video.removeAttribute("muted");
+    }
+
+    if (surpriseAudio) {
+      surpriseAudio.pause();
+      surpriseAudio.currentTime = 0;
+      surpriseAudio.volume = 1;
+    }
 
     try {
+      if (isMobileDevice && surpriseAudio) {
+        await surpriseAudio.play();
+      }
+
       await video.play();
     } catch (error) {
       video.muted = true;
@@ -414,6 +453,14 @@ if (startSceneButton && video) {
       try {
         await video.play();
       } catch (fallbackError) {
+        if (surpriseAudio) {
+          try {
+            await surpriseAudio.play();
+          } catch (audioError) {
+            // Keep controls visible so the user can manually start playback.
+          }
+        }
+
         video.controls = true;
         if (videoOverlay) {
           videoOverlay.classList.remove("is-hidden");
@@ -425,6 +472,11 @@ if (startSceneButton && video) {
 
 if (video) {
   video.addEventListener("ended", () => {
+    if (surpriseAudio) {
+      surpriseAudio.pause();
+      surpriseAudio.currentTime = 0;
+    }
+
     window.setTimeout(() => {
       window.location.href = "reveal.html";
     }, 700);
