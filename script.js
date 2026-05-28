@@ -2,7 +2,7 @@ const speechBox = document.getElementById("typewriter");
 const releaseDate = new Date(2026, 5, 2, 0, 0, 0, 0);
 const releasePage = "index.html";
 const currentPath = window.location.pathname.split("/").pop() || releasePage;
-const isReleaseLocked = new Date() < releaseDate;
+const isReleaseLocked = false;
 let audioContext;
 const backgroundMusic = new Audio("the_mountain-birthday-490600.mp3");
 const backgroundMusicTimeKey = "birthdayBackgroundMusicTime";
