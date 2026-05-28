@@ -8,6 +8,7 @@ const backgroundMusic = new Audio("the_mountain-birthday-490600.mp3");
 const backgroundMusicTimeKey = "birthdayBackgroundMusicTime";
 const backgroundMusicVolume = 0.16;
 const backgroundMusicUnlockedKey = "birthdayBackgroundMusicUnlocked";
+const flowStageKey = "birthdayFlowStage";
 
 const formatCountdown = (distance) => {
   const totalSeconds = Math.max(0, Math.floor(distance / 1000));
@@ -86,6 +87,35 @@ if (isReleaseLocked) {
     activateReleaseCountdown();
   }
 }
+
+const setFlowStage = (stage) => {
+  window.sessionStorage.setItem(flowStageKey, stage);
+};
+
+const getFlowStage = () => window.sessionStorage.getItem(flowStageKey) || "entry";
+
+const enforceFlowEntry = () => {
+  if (currentPath === "" || currentPath === "index.html") {
+    setFlowStage("entry");
+    return;
+  }
+
+  const allowedStages = {
+    "code.html": ["code", "surprise", "reveal", "final"],
+    "surprise.html": ["surprise", "reveal", "final"],
+    "reveal.html": ["reveal", "final"],
+    "final.html": ["final"]
+  };
+
+  const currentStage = getFlowStage();
+  const allowedForPage = allowedStages[currentPath];
+
+  if (allowedForPage && !allowedForPage.includes(currentStage)) {
+    window.location.replace("index.html");
+  }
+};
+
+enforceFlowEntry();
 
 backgroundMusic.loop = true;
 backgroundMusic.preload = "auto";
@@ -333,7 +363,14 @@ const passwordMessage = document.getElementById("passwordMessage");
 const lockCard = document.getElementById("lockCard");
 const openCodeButton = document.getElementById("openCodeButton");
 const cuteLock = document.getElementById("cuteLock");
+const finalPageLinks = document.querySelectorAll('a[href="final.html"]');
 let isOpening = false;
+
+finalPageLinks.forEach((link) => {
+  link.addEventListener("click", () => {
+    setFlowStage("final");
+  });
+});
 
 if (openCodeButton) {
   openCodeButton.addEventListener("click", async () => {
@@ -351,6 +388,7 @@ if (openCodeButton) {
       lockCard.classList.add("is-opening");
     }
 
+    setFlowStage("code");
     triggerPageTransition("code.html");
   });
 }
@@ -387,6 +425,7 @@ if (passwordForm && passwordInput && passwordMessage) {
       }
 
       passwordMessage.textContent = "Wish word accepted. Opening your birthday wish...";
+      setFlowStage("surprise");
       triggerPageTransition("surprise.html");
       return;
     }
@@ -482,6 +521,7 @@ if (video) {
       surpriseAudio.currentTime = 0;
     }
 
+    setFlowStage("reveal");
     window.setTimeout(() => {
       window.location.href = "reveal.html";
     }, 700);
